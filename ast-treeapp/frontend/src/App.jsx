@@ -1,13 +1,5 @@
-import { useState } from 'react'
-import './App.css'
+import Explorer from "./pages/Explorer.jsx";
 
-function App() {
-
-  return (
-    <>
-     
-    </>
-  )
+export default function App() {
+  return <Explorer />;
 }
-
-export default App
