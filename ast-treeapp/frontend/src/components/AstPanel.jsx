@@ -155,9 +155,9 @@ function ToggleButton({ active, onClick, children }) {
       style={{
         padding: "6px 10px",
         borderRadius: 999,
-        border: active ? "1px solid #3b82f6" : "1px solid #223055",
-        background: active ? "rgba(59,130,246,0.2)" : "#0b1020",
-        color: active ? "#bfdbfe" : "#cbd5e1",
+        border: active ? "1px solid #ffffff" : "1px solid #2a2a2a",
+        background: active ? "rgba(255,255,255,0.12)" : "#161616",
+        color: active ? "#ffffff" : "#d4d4d4",
         fontSize: 12,
         cursor: "pointer",
       }}

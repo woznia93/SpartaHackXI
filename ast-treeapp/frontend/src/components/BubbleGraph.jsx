@@ -33,7 +33,7 @@ export default function BubbleGraph({ ast, selectedId, onSelect, preserveStructu
 
     // Links
     const link = container.append("g").attr("class", "links").selectAll("line").data(links).join("line")
-      .attr("stroke", "#1f2a44")
+      .attr("stroke", "#2a2a2a")
       .attr("stroke-width", 1);
 
     // Nodes
@@ -41,13 +41,13 @@ export default function BubbleGraph({ ast, selectedId, onSelect, preserveStructu
       const g = enter.append("g").attr("class", "node").style("cursor", "pointer");
       g.append("circle")
         .attr("r", (d) => d.r)
-        .attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(59,130,246,0.45)" : "rgba(15,23,42,0.95)"))
-        .attr("stroke", (d) => (d.id && d.id === selectedId ? "#60a5fa" : "#223055"))
+        .attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(255,255,255,0.12)" : "#111111"))
+        .attr("stroke", (d) => (d.id && d.id === selectedId ? "#ffffff" : "#2a2a2a"))
         .attr("stroke-width", (d) => (d.id && d.id === selectedId ? 2 : 1));
       g.append("text")
         .attr("text-anchor", "middle")
         .attr("dy", "0.35em")
-        .attr("fill", "#e2e8f0")
+        .attr("fill", "#f5f5f5")
         .style("pointer-events", "none")
         .style("user-select", "none")
         .attr("font-size", 11)
@@ -151,8 +151,8 @@ export default function BubbleGraph({ ast, selectedId, onSelect, preserveStructu
   useEffect(() => {
     if (!svgRef.current) return;
     const svg = d3.select(svgRef.current);
-    svg.selectAll("g.node").selectAll("circle").attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(59,130,246,0.45)" : "rgba(15,23,42,0.95)"))
-      .attr("stroke", (d) => (d.id && d.id === selectedId ? "#60a5fa" : "#223055"))
+    svg.selectAll("g.node").selectAll("circle").attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(255,255,255,0.12)" : "#111111"))
+      .attr("stroke", (d) => (d.id && d.id === selectedId ? "#ffffff" : "#2a2a2a"))
       .attr("stroke-width", (d) => (d.id && d.id === selectedId ? 2 : 1));
   }, [selectedId]);
 

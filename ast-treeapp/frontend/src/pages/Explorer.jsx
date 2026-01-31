@@ -1,32 +1,32 @@
 import { useMemo, useState } from "react";
 import { styles } from "../styles/astExplorerStyles.js";
 import HeaderBar from "../components/HeaderBar.jsx";
-import TextEditorCard from "../components/TextEditorCard.jsx";
+import RulesGridCard from "../components/RulesGridCard.jsx";
 import SourceEditorCard from "../components/SourceEditorCard.jsx";
 import AstPanel from "../components/AstPanel.jsx";
 import FooterNote from "../components/FooterNote.jsx";
 import { mockParseArithmetic } from "../utils/mockParseArithmetic.js";
 
-const DEFAULT_TOKENS = `# Token rules: TOKEN <NAME> /regex/ [skip]
-TOKEN NUMBER /\\d+(\\.\\d+)?/
-TOKEN PLUS   /\\+/
-TOKEN STAR   /\\*/
-TOKEN LPAREN /\\(/
-TOKEN RPAREN /\\)/
-TOKEN WS     /\\s+/ skip
-`;
+const DEFAULT_TOKEN_ROWS = [
+  { left: "NUMBER", right: "/\\d+(\\.\\d+)?/" },
+  { left: "PLUS", right: "/\\+/" },
+  { left: "STAR", right: "/\\*/" },
+  { left: "LPAREN", right: "/\\(/" },
+  { left: "RPAREN", right: "/\\)/" },
+  { left: "WS", right: "/\\s+/ skip" },
+];
 
-const DEFAULT_GRAMMAR = `# Grammar rules (BNF-ish)
-Expr   -> Term (PLUS Term)*
-Term   -> Factor (STAR Factor)*
-Factor -> NUMBER | LPAREN Expr RPAREN
-`;
+const DEFAULT_GRAMMAR_ROWS = [
+  { left: "Expr", right: "Term (PLUS Term)*" },
+  { left: "Term", right: "Factor (STAR Factor)*" },
+  { left: "Factor", right: "NUMBER | LPAREN Expr RPAREN" },
+];
 
 const DEFAULT_SOURCE = `1 + 2 * (3 + 4)`;
 
 export default function Explorer() {
-  const [tokenRules, setTokenRules] = useState(DEFAULT_TOKENS);
-  const [grammarRules, setGrammarRules] = useState(DEFAULT_GRAMMAR);
+  const [tokenRows, setTokenRows] = useState(DEFAULT_TOKEN_ROWS);
+  const [grammarRows, setGrammarRows] = useState(DEFAULT_GRAMMAR_ROWS);
   const [sourceText, setSourceText] = useState(DEFAULT_SOURCE);
 
   const [isParsing, setIsParsing] = useState(false);
@@ -36,6 +36,9 @@ export default function Explorer() {
   const [selectedNode, setSelectedNode] = useState(null);
 
   const [useMock, setUseMock] = useState(true);
+
+  const tokenRules = useMemo(() => rowsToTokenRules(tokenRows), [tokenRows]);
+  const grammarRules = useMemo(() => rowsToGrammarRules(grammarRows), [grammarRows]);
 
   const status = useMemo(() => {
     if (isParsing) return { label: "Parsing…", color: "#6b7280" };
@@ -107,10 +110,12 @@ export default function Explorer() {
       />
 
       <main style={styles.mainGrid}>
-        <TextEditorCard
+        <RulesGridCard
           title="Token Regex Rules"
-          value={tokenRules}
-          onChange={setTokenRules}
+          rows={tokenRows}
+          setRows={setTokenRows}
+          leftPlaceholder="TOKEN_NAME"
+          rightPlaceholder="/regex/ [skip]"
           help={
             <>
               Format: <code>TOKEN NAME /regex/</code> and optionally{" "}
@@ -119,10 +124,12 @@ export default function Explorer() {
           }
         />
 
-        <TextEditorCard
+        <RulesGridCard
           title="Grammar Rules"
-          value={grammarRules}
-          onChange={setGrammarRules}
+          rows={grammarRows}
+          setRows={setGrammarRows}
+          leftPlaceholder="NonTerminal"
+          rightPlaceholder="Rule expression"
           help={
             <>
               PEG style expressions.
@@ -148,4 +155,20 @@ export default function Explorer() {
       <FooterNote />
     </div>
   );
+}
+
+function rowsToTokenRules(rows) {
+  return rows
+    .map((r) => ({ left: r.left?.trim() ?? "", right: r.right?.trim() ?? "" }))
+    .filter((r) => r.left || r.right)
+    .map((r) => `TOKEN ${r.left} ${r.right}`.trim())
+    .join("\n");
+}
+
+function rowsToGrammarRules(rows) {
+  return rows
+    .map((r) => ({ left: r.left?.trim() ?? "", right: r.right?.trim() ?? "" }))
+    .filter((r) => r.left || r.right)
+    .map((r) => `${r.left} -> ${r.right}`.trim())
+    .join("\n");
 }
