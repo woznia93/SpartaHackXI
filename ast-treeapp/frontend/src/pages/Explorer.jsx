@@ -108,7 +108,7 @@ export default function Explorer() {
 
       <main style={styles.mainGrid}>
         <TextEditorCard
-          title="Token regex rules"
+          title="Token Regex Rules"
           value={tokenRules}
           onChange={setTokenRules}
           help={
@@ -120,13 +120,12 @@ export default function Explorer() {
         />
 
         <TextEditorCard
-          title="Grammar rules"
+          title="Grammar Rules"
           value={grammarRules}
           onChange={setGrammarRules}
           help={
             <>
-              BNF-ish. For the demo, this is just displayed (the mock parser
-              ignores it).
+              PEG style expressions.
             </>
           }
         />

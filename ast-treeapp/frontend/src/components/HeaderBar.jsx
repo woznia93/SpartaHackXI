@@ -4,7 +4,7 @@ export default function HeaderBar({ status, useMock, setUseMock, onParse, isPars
   return (
     <header style={styles.header}>
       <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-        <h1 style={styles.h1}>AST Explorer (Demo)</h1>
+        <h1 style={styles.h1}>AST Explorer</h1>
         <span style={{ ...styles.badge, borderColor: status.color, color: status.color }}>
           {status.label}
         </span>
