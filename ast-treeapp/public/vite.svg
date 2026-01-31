@@ -1,1 +1,495 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+"use client";
+
+import React, { useMemo, useState } from "react";
+
+/**
+ * EditableAstTree
+ * - Works with nodes shaped like: { type, start, end, props, children }
+ * - You can customize:
+ *   - how children are read: getChildren(node)
+ *   - how label is rendered: renderLabel({node, depth, path, isSelected})
+ *   - which props are editable: editableProps (array)
+ *   - what happens on update: onUpdateNode(path, patch, meta)
+ *   - controlled selection/expanded state (optional)
+ */
+
+export default function EditableAstTree({
+  root,
+
+  // behavior
+  getChildren = (n) => n?.children ?? [],
+  getNodeId = (path, node) => node?.id ?? path, // stable key/id
+  autoExpandDepth = 2,
+
+  // selection (controlled or uncontrolled)
+  selectedPath: selectedPathProp,
+  onSelect,
+
+  // expanded (controlled or uncontrolled)
+  expandedPaths: expandedPathsProp,
+  onExpandedChange,
+
+  // editing
+  editable = true,
+  editableProps = ["name", "value", "operator", "kind"], // keys inside node.props
+  onUpdateNode, // (path, patch, meta) => void
+  validateEdit = defaultValidateEdit, // (key, value, node) => {ok, message?}
+
+  // rendering customization
+  renderLabel, // (ctx) => ReactNode
+  renderRight, // (ctx) => ReactNode (e.g., buttons)
+  theme = defaultTheme,
+}) {
+  // guard
+  if (!root) return <div style={{ opacity: 0.75 }}>No node to display.</div>;
+
+  // selection state
+  const [selectedPathState, setSelectedPathState] = useState("root");
+  const selectedPath = selectedPathProp ?? selectedPathState;
+
+  // expanded state: store in a Set for quick lookup
+  const [expandedState, setExpandedState] = useState(() => {
+    const s = new Set();
+    // auto-expand first N depths
+    function seed(node, depth, path) {
+      if (depth < autoExpandDepth) s.add(path);
+      const kids = getChildren(node) || [];
+      kids.forEach((k, i) => seed(k, depth + 1, `${path}.${i}`));
+    }
+    seed(root, 0, "root");
+    return s;
+  });
+
+  const expandedPaths = expandedPathsProp
+    ? new Set(expandedPathsProp)
+    : expandedState;
+
+  function setExpanded(nextSet) {
+    if (onExpandedChange) onExpandedChange(Array.from(nextSet));
+    if (!expandedPathsProp) setExpandedState(new Set(nextSet));
+  }
+
+  function select(path, node) {
+    onSelect?.(path, node);
+    if (!selectedPathProp) setSelectedPathState(path);
+  }
+
+  function toggle(path) {
+    const next = new Set(expandedPaths);
+    if (next.has(path)) next.delete(path);
+    else next.add(path);
+    setExpanded(next);
+  }
+
+  function expandAll() {
+    const next = new Set();
+    walk(root, getChildren, (node, path) => {
+      if ((getChildren(node) || []).length > 0) next.add(path);
+    });
+    setExpanded(next);
+  }
+
+  function collapseAll() {
+    setExpanded(new Set()); // or keep "root" expanded if you want
+  }
+
+  return (
+    <div style={{ ...theme.container }}>
+      {/* Toolbar */}
+      <div style={theme.toolbar}>
+        <div style={{ fontWeight: 700 }}>AST</div>
+        <div style={{ flex: 1 }} />
+        <button style={theme.btn} onClick={expandAll}>Expand all</button>
+        <button style={theme.btn} onClick={collapseAll}>Collapse all</button>
+      </div>
+
+      {/* Tree */}
+      <div style={theme.tree}>
+        <TreeNodeRow
+          node={root}
+          path="root"
+          depth={0}
+          getChildren={getChildren}
+          getNodeId={getNodeId}
+          expandedPaths={expandedPaths}
+          selectedPath={selectedPath}
+          onToggle={toggle}
+          onSelect={select}
+          editable={editable}
+          editableProps={editableProps}
+          onUpdateNode={onUpdateNode}
+          validateEdit={validateEdit}
+          renderLabel={renderLabel}
+          renderRight={renderRight}
+          theme={theme}
+        />
+      </div>
+    </div>
+  );
+}
+
+function TreeNodeRow({
+  node,
+  path,
+  depth,
+  getChildren,
+  getNodeId,
+  expandedPaths,
+  selectedPath,
+  onToggle,
+  onSelect,
+
+  editable,
+  editableProps,
+  onUpdateNode,
+  validateEdit,
+
+  renderLabel,
+  renderRight,
+  theme,
+}) {
+  const children = getChildren(node) || [];
+  const hasKids = children.length > 0;
+  const open = expandedPaths.has(path);
+  const isSelected = selectedPath === path;
+
+  // editing state
+  const [editingKey, setEditingKey] = useState(null); // which prop key is being edited
+  const [draft, setDraft] = useState("");
+  const [editError, setEditError] = useState(null);
+
+  const labelNode = renderLabel
+    ? renderLabel({ node, depth, path, isSelected })
+    : defaultRenderLabel({ node, depth, path, isSelected, theme });
+
+  const rightNode = renderRight
+    ? renderRight({ node, depth, path, isSelected })
+    : null;
+
+  function startEdit(key) {
+    if (!editable) return;
+    if (!editableProps.includes(key)) return;
+    const current = node?.props?.[key];
+    setDraft(current == null ? "" : String(current));
+    setEditingKey(key);
+    setEditError(null);
+  }
+
+  function commitEdit() {
+    if (!editingKey) return;
+    const res = validateEdit(editingKey, draft, node);
+    if (!res.ok) {
+      setEditError(res.message ?? "Invalid value");
+      return;
+    }
+
+    // patch only touches node.props[editingKey]
+    const patch = {
+      props: {
+        ...(node.props || {}),
+        [editingKey]: coerceValue(editingKey, draft),
+      },
+    };
+
+    onUpdateNode?.(path, patch, { key: editingKey, value: draft });
+    setEditingKey(null);
+    setEditError(null);
+  }
+
+  function cancelEdit() {
+    setEditingKey(null);
+    setEditError(null);
+  }
+
+  return (
+    <div>
+      {/* Row */}
+      <div
+        style={{
+          ...theme.row,
+          ...(isSelected ? theme.rowSelected : null),
+          paddingLeft: theme.indent * depth + theme.row.paddingLeft,
+        }}
+        onClick={() => onSelect(path, node)}
+      >
+        {/* caret */}
+        <span
+          style={{
+            ...theme.caret,
+            opacity: hasKids ? 1 : 0.35,
+            cursor: hasKids ? "pointer" : "default",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (hasKids) onToggle(path);
+          }}
+        >
+          {hasKids ? (open ? "▾" : "▸") : "•"}
+        </span>
+
+        {/* label */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+          {labelNode}
+
+          {/* range */}
+          {node?.start != null && node?.end != null && (
+            <span style={theme.range}>
+              [{node.start}, {node.end}]
+            </span>
+          )}
+
+          {/* editable props pills */}
+          {node?.props && (
+            <PropPills
+              node={node}
+              editable={editable}
+              editableProps={editableProps}
+              editingKey={editingKey}
+              draft={draft}
+              setDraft={setDraft}
+              startEdit={startEdit}
+              commitEdit={commitEdit}
+              cancelEdit={cancelEdit}
+              editError={editError}
+              theme={theme}
+            />
+          )}
+        </div>
+
+        {/* right side actions */}
+        {rightNode}
+      </div>
+
+      {/* children */}
+      {open && hasKids && (
+        <div>
+          {children.map((child, i) => (
+            <TreeNodeRow
+              key={getNodeId(`${path}.${i}`, child)}
+              node={child}
+              path={`${path}.${i}`}
+              depth={depth + 1}
+              getChildren={getChildren}
+              getNodeId={getNodeId}
+              expandedPaths={expandedPaths}
+              selectedPath={selectedPath}
+              onToggle={onToggle}
+              onSelect={onSelect}
+              editable={editable}
+              editableProps={editableProps}
+              onUpdateNode={onUpdateNode}
+              validateEdit={validateEdit}
+              renderLabel={renderLabel}
+              renderRight={renderRight}
+              theme={theme}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PropPills({
+  node,
+  editable,
+  editableProps,
+  editingKey,
+  draft,
+  setDraft,
+  startEdit,
+  commitEdit,
+  cancelEdit,
+  editError,
+  theme,
+}) {
+  const keys = Object.keys(node.props || {});
+  if (!keys.length) return null;
+
+  // show only a few by default (you can tweak)
+  const shown = keys.slice(0, 4);
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+      {shown.map((k) => {
+        const val = node.props[k];
+        const canEdit = editable && editableProps.includes(k);
+        const isEditing = editingKey === k;
+
+        if (isEditing) {
+          return (
+            <span key={k} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={theme.pillKey}>{k}</span>
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") commitEdit();
+                  if (e.key === "Escape") cancelEdit();
+                }}
+                autoFocus
+                style={theme.editInput}
+              />
+              <button style={theme.smallBtn} onClick={commitEdit}>Save</button>
+              <button style={theme.smallBtn} onClick={cancelEdit}>Cancel</button>
+              {editError && <span style={theme.errorText}>{editError}</span>}
+            </span>
+          );
+        }
+
+        return (
+          <span
+            key={k}
+            style={{
+              ...theme.pill,
+              ...(canEdit ? theme.pillEditable : null),
+            }}
+            title={canEdit ? "Click to edit" : undefined}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canEdit) startEdit(k);
+            }}
+          >
+            <span style={theme.pillKey}>{k}:</span>{" "}
+            <span style={theme.pillVal}>{String(val)}</span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function defaultRenderLabel({ node, theme }) {
+  return <span style={theme.type}>{node?.type ?? "Unknown"}</span>;
+}
+
+function walk(root, getChildren, fn, path = "root") {
+  fn(root, path);
+  const kids = getChildren(root) || [];
+  kids.forEach((k, i) => walk(k, getChildren, fn, `${path}.${i}`));
+}
+
+function coerceValue(key, raw) {
+  // Customize coercion per key
+  if (key === "value") {
+    // if it looks numeric, parse it
+    if (/^-?\d+(\.\d+)?$/.test(raw.trim())) return Number(raw.trim());
+    return raw;
+  }
+  return raw;
+}
+
+function defaultValidateEdit(key, value) {
+  // You can tighten rules per key
+  if (key === "operator" && !["+", "-", "*", "/"].includes(value.trim())) {
+    return { ok: false, message: "Operator must be + - * /" };
+  }
+  if (key === "kind" && !["let", "const", "var"].includes(value.trim())) {
+    return { ok: false, message: "kind must be let/const/var" };
+  }
+  return { ok: true };
+}
+
+const defaultTheme = {
+  container: {
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+    fontSize: 13,
+    color: "white",
+  },
+  toolbar: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "8px 10px",
+    border: "1px solid rgba(255,255,255,0.10)",
+    borderRadius: 12,
+    background: "rgba(255,255,255,0.03)",
+    marginBottom: 10,
+  },
+  btn: {
+    padding: "6px 10px",
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.18)",
+    background: "rgba(255,255,255,0.06)",
+    color: "white",
+    cursor: "pointer",
+  },
+  smallBtn: {
+    padding: "4px 8px",
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.18)",
+    background: "rgba(255,255,255,0.06)",
+    color: "white",
+    cursor: "pointer",
+    fontSize: 12,
+  },
+  tree: {
+    border: "1px solid rgba(255,255,255,0.10)",
+    borderRadius: 12,
+    background: "rgba(255,255,255,0.02)",
+    padding: 8,
+    overflow: "auto",
+    maxHeight: "60vh",
+  },
+  indent: 14,
+  row: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "4px 8px",
+    borderRadius: 10,
+    cursor: "pointer",
+    userSelect: "none",
+    paddingLeft: 8,
+  },
+  rowSelected: {
+    background: "rgba(255,255,255,0.10)",
+  },
+  caret: {
+    width: 16,
+    textAlign: "center",
+  },
+  type: {
+    fontWeight: 750,
+    opacity: 0.95,
+  },
+  range: {
+    opacity: 0.65,
+    marginLeft: 6,
+  },
+  pill: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    borderRadius: 999,
+    padding: "2px 8px",
+    border: "1px solid rgba(255,255,255,0.10)",
+    background: "rgba(255,255,255,0.04)",
+  },
+  pillEditable: {
+    border: "1px solid rgba(255,255,255,0.22)",
+    background: "rgba(255,255,255,0.07)",
+  },
+  pillKey: {
+    opacity: 0.75,
+  },
+  pillVal: {
+    opacity: 0.95,
+  },
+  editInput: {
+    width: 140,
+    padding: "4px 8px",
+    borderRadius: 10,
+    border: "1px solid rgba(255,255,255,0.18)",
+    background: "rgba(0,0,0,0.25)",
+    color: "white",
+    outline: "none",
+    fontFamily: "inherit",
+    fontSize: 12,
+  },
+  errorText: {
+    color: "rgba(255,100,100,0.95)",
+    fontSize: 12,
+    marginLeft: 6,
+  },
+};
