@@ -190,15 +190,15 @@ export const styles = {
     cursor: "pointer",
   },
   treeRowSelected: {
-    background: "var(--row-selected)",
+    background: "var(--panel",
     border: "1px solid var(--row-selected-border)",
   },
   disclosure: {
     width: 22,
     height: 22,
     borderRadius: 8,
-    border: "1px solid var(--border)",
-    background: "var(--chip)",
+    border: "none",
+    background: "var(--panel)",
     color: "var(--text)",
     cursor: "pointer",
   },
