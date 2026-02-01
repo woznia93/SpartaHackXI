@@ -13,14 +13,14 @@ const DEFAULT_TOKEN_ROWS = [
   { left: "STAR", right: "\\*", ignore: false },
   { left: "LPAREN", right: "\\(",ignore: false },
   { left: "RPAREN", right: "\\)", ignore: false },
-  { left: "WS", right: "\\s+" , ignore: false},
+  { left: "WS", right: "\\s+" , ignore: true},
 ];
 
 const DEFAULT_GRAMMAR_ROWS = [
-  { left: "Start", right: "Expr" },
-  { left: "Expr", right: "Term (PLUS Term)*" },
-  { left: "Term", right: "Factor (STAR Factor)*" },
-  { left: "Factor", right: "NUMBER | LPAREN Expr RPAREN" },
+  { left: "start", right: "expr" },
+  { left: "expr", right: "term (PLUS term)*" },
+  { left: "term", right: "factor (STAR factor)*" },
+  { left: "factor", right: "NUMBER | LPAREN expr RPAREN" },
 ];
 
 const DEFAULT_SOURCE = `1 + 2 * (3 + 4)`;
@@ -162,7 +162,7 @@ export default function Explorer() {
           leftPlaceholder="TOKEN_NAME"
           rightPlaceholder="regex"
           showIgnore
-          helpLeft={<span>Format: <code>TOKEN NAME /regex/</code>.</span>}
+          helpLeft={<span>Format: <code>TOKEN_NAME regex</code>.</span>}
           helpRight={<span style={{ textAlign: "right" }}>Use checkboxes to skip tokens.</span>}
         />
 
@@ -170,7 +170,7 @@ export default function Explorer() {
           title="Grammar Rules"
           rows={grammarRows}
           setRows={setGrammarRows}
-          leftPlaceholder="NonTerminal"
+          leftPlaceholder="Non Terminal"
           rightPlaceholder="Rule expression"
           lockLeftIndices={[0]}
           disableRemoveIndices={[0]}

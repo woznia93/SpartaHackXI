@@ -17,14 +17,22 @@ export default function RulesGridCard({
 }) {
   const [editing, setEditing] = useState(false);
 
+  function isLocked(index) {
+    return lockLeftIndices.includes(index);
+  }
+
   function updateRow(index, key, value) {
-    if (key === "left" && lockLeftIndices.includes(index)) return;
-    const next = rows.map((row, i) => (i === index ? { ...row, [key]: value } : row));
+    if (key === "left" && isLocked(index)) return;
+    const next = rows.map((row, i) =>
+      i === index ? { ...row, [key]: value } : row
+    );
     setRows(next);
   }
 
   function setIgnore(index, checked) {
-    const next = rows.map((row, i) => (i === index ? { ...row, ignore: checked } : row));
+    const next = rows.map((row, i) =>
+      i === index ? { ...row, ignore: checked } : row
+    );
     setRows(next);
   }
 
@@ -52,61 +60,80 @@ export default function RulesGridCard({
       </div>
 
       <div style={styles.gridRows}>
-        {rows.map((row, i) => (
-          <div
-            key={`row-${i}`}
-            style={
-              showIgnore
-                ? {
-                    ...styles.gridRow,
-                    gridTemplateColumns: "minmax(0, 1fr) minmax(0, 2fr) auto auto",
-                  }
-                : styles.gridRow
-            }
-          >
-            <input
-              value={row.left}
-              onChange={(e) => updateRow(i, "left", e.target.value)}
-              placeholder={leftPlaceholder}
-              readOnly={lockLeftIndices.includes(i)}
-              style={styles.gridInput}
-              spellCheck={false}
-            />
-            <input
-              value={row.right}
-              onChange={(e) => updateRow(i, "right", e.target.value)}
-              placeholder={rightPlaceholder}
-              style={styles.gridInput}
-              spellCheck={false}
-            />
-            {showIgnore && (
-              <label
+        {rows.map((row, i) => {
+          const locked = isLocked(i);
+
+          return (
+            <div
+              key={`row-${i}`}
+              style={
+                showIgnore
+                  ? {
+                      ...styles.gridRow,
+                      gridTemplateColumns:
+                        "minmax(0, 1fr) minmax(0, 2fr) auto auto",
+                    }
+                  : styles.gridRow
+              }
+            >
+              <input
+                value={row.left}
+                onChange={(e) => updateRow(i, "left", e.target.value)}
+                placeholder={leftPlaceholder}
+                readOnly={locked}
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 11,
-                  color: "#bdbdbd",
-                  whiteSpace: "nowrap",
+                  ...styles.gridInput,
+                  ...(locked && {
+                    backgroundColor: styles.card.backgroundColor,
+                    borderStyle: "dotted",
+                  }),
                 }}
-              >
-                <input
-                  type="checkbox"
-                  checked={Boolean(row.ignore)}
-                  onChange={(e) => setIgnore(i, e.target.checked)}
-                  style={{ accentColor: "var(--accent)" }}
-                />
-              </label>
-            )}
-            {editing && !disableRemoveIndices.includes(i) ? (
-              <button type="button" onClick={() => removeRow(i)} style={styles.rowBtn}>
-                Remove
-              </button>
-            ) : (
-              <span />
-            )}
-          </div>
-        ))}
+                onFocus={(e) => locked && e.target.blur()}
+                spellCheck={false}
+              />
+
+              <input
+                value={row.right}
+                onChange={(e) => updateRow(i, "right", e.target.value)}
+                placeholder={rightPlaceholder}
+                style={styles.gridInput}
+                spellCheck={false}
+              />
+
+              {showIgnore && (
+                <label
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 11,
+                    color: "#bdbdbd",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={Boolean(row.ignore)}
+                    onChange={(e) => setIgnore(i, e.target.checked)}
+                    style={{ accentColor: "var(--accent)" }}
+                  />
+                </label>
+              )}
+
+              {editing && !disableRemoveIndices.includes(i) ? (
+                <button
+                  type="button"
+                  onClick={() => removeRow(i)}
+                  style={styles.rowBtn}
+                >
+                  Remove
+                </button>
+              ) : (
+                <span />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {editing && (

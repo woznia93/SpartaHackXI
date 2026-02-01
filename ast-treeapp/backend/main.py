@@ -62,8 +62,6 @@ def parse_code(request: CodeRequest):
         if rule.ignore:
             grammar += f"%ignore {rule.key}\n"
 
-    grammar += "start : expr\n"
-
     print(grammar)
     parser = Lark(grammar)
 
