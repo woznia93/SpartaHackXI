@@ -3,7 +3,7 @@ import { styles } from "../styles/astExplorerStyles.js";
 export default function TokensList({ tokens }) {
   return (
     <div>
-      <h3 style={{ ...styles.h3, marginTop: 18 }}>Tokens (optional)</h3>
+      {/* <h3 style={{ ...styles.h3, marginTop: 18 }}>Tokens (optional)</h3>
       {!tokens?.length ? (
         <div style={styles.placeholderSmall}>No tokens returned.</div>
       ) : (
@@ -20,7 +20,7 @@ export default function TokensList({ tokens }) {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

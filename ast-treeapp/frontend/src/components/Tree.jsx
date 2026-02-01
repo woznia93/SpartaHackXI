@@ -27,7 +27,7 @@ function TreeNode({ node, depth, onSelect, selectedId, getChildren }) {
   const children = getChildren(node);
   const isSelected = node?.id && node.id === selectedId;
 
-  const label = `${node.type ?? "Node"}${node.value != null ? `: ${node.value}` : ""}`;
+  const label = `${node.type ?? "Node"}${node.value != null ? `: '${node.value}'` : ""}`;
 
   return (
     <div style={{ marginLeft: depth * 14 }}>
