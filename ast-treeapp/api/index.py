@@ -77,5 +77,5 @@ def parse_code(request: CodeRequest):
     except Exception as e:
         return {"ok": False, "errors": [{"message": str(e)}]}
 
-# 🔴 REQUIRED BY VERCEL
+#REQUIRED BY VERCEL
 handler = Mangum(app)
