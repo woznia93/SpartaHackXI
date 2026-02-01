@@ -26,7 +26,7 @@ app.add_middleware(
 class TokenRule(BaseModel):
     key: str
     value: str
-    ignore: Optional[bool] = False
+    ignore: bool
 
 class GrammarRule(BaseModel):
     left: str
@@ -56,14 +56,13 @@ def parse_code(request: CodeRequest):
     for rule in request.grammarRules: 
         grammar += f"{rule.left} : {rule.right}\n"
         
+
     for rule in request.tokenRules:
         grammar += f"{rule.key} : /{rule.value}/\n"
+        if rule.ignore:
+            grammar += f"%ignore {rule.key}\n"
 
     grammar += "start : expr\n"
-    grammar += "%ignore WS\n"
-    for rule in request.tokenRules:
-        if rule.ignore and rule.key:
-            grammar += f"%ignore {rule.key}\n"
 
     print(grammar)
     parser = Lark(grammar)
