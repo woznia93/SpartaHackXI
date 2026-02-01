@@ -117,11 +117,8 @@ export default function Explorer() {
           leftPlaceholder="TOKEN_NAME"
           rightPlaceholder="regex"
           showIgnore
-          help={
-            <>
-              Format: <code>TOKEN NAME /regex/</code>. Use checkboxes to skip tokens.
-            </>
-          }
+          helpLeft={<span>Format: <code>TOKEN NAME /regex/</code>.</span>}
+          helpRight={<span style={{ textAlign: "right" }}>Use checkboxes to skip tokens.</span>}
         />
 
         <RulesGridCard
