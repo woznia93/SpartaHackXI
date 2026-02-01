@@ -115,7 +115,7 @@ export default function Explorer() {
           rows={tokenRows}
           setRows={setTokenRows}
           leftPlaceholder="TOKEN_NAME"
-          rightPlaceholder="/regex/ [skip]"
+          rightPlaceholder="regex"
           help={
             <>
               Format: <code>TOKEN NAME /regex/</code> and optionally{" "}
@@ -159,16 +159,31 @@ export default function Explorer() {
 
 function rowsToTokenRules(rows) {
   return rows
-    .map((r) => ({ left: r.left?.trim() ?? "", right: r.right?.trim() ?? "" }))
-    .filter((r) => r.left || r.right)
-    .map((r) => `TOKEN ${r.left} ${r.right}`.trim())
-    .join("\n");
+    .map((r) => {
+      const key = (r.left ?? "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "_");
+
+      const value = r.right?.trim() ?? "";
+
+      return { key, value };
+    })
+    .filter((r) => r.key || r.value);
 }
+
 
 function rowsToGrammarRules(rows) {
   return rows
-    .map((r) => ({ left: r.left?.trim() ?? "", right: r.right?.trim() ?? "" }))
-    .filter((r) => r.left || r.right)
-    .map((r) => `${r.left} -> ${r.right}`.trim())
-    .join("\n");
+    .map((r) => {
+      const left = (r.left ?? "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "_");
+      const right = r.right?.trim() ?? "";
+
+      return { left, right };
+    })
+    .filter((r) => r.left || r.right);
 }
+
