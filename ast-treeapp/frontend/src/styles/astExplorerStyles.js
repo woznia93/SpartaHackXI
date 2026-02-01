@@ -7,7 +7,7 @@ export const styles = {
   },
   header: {
     padding: "18px 18px 10px 18px",
-    borderBottom: "1px solid var(--border)",
+    borderBottom: "none",
     display: "flex",
     justifyContent: "space-between",
     gap: 12,
@@ -39,7 +39,7 @@ export const styles = {
   },
   card: {
     background: "var(--card)",
-    border: "1px solid var(--border)",
+    border: "none",
     borderRadius: 16,
     padding: 14,
     boxShadow: "var(--shadow)",
@@ -159,7 +159,7 @@ export const styles = {
   },
   treePane: {
     borderRadius: 14,
-    border: "1px solid var(--border)",
+    border: "none",
     background: "var(--panel)",
     padding: 10,
     minHeight: 260,
@@ -234,7 +234,7 @@ export const styles = {
   miniMuted: { fontSize: 11, color: "var(--muted)" },
   footer: {
     padding: 14,
-    borderTop: "1px solid var(--border)",
+    borderTop: "none",
     color: "var(--muted)",
   },
   muted: { fontSize: 12, color: "var(--muted)" },

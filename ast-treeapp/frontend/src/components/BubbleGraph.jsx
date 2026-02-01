@@ -41,7 +41,7 @@ export default function BubbleGraph({ ast, selectedId, onSelect, preserveStructu
       const g = enter.append("g").attr("class", "node").style("cursor", "pointer");
       g.append("circle")
         .attr("r", (d) => d.r)
-        .attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(255,255,255,0.12)" : "#111111"))
+        .attr("fill", (d) => (d.id && d.id === selectedId ? "rgba(255,255,255,0.12)" : "#2a2a2a"))
         .attr("stroke", (d) => (d.id && d.id === selectedId ? "#ffffff" : "#2a2a2a"))
         .attr("stroke-width", (d) => (d.id && d.id === selectedId ? 2 : 1));
       g.append("text")
