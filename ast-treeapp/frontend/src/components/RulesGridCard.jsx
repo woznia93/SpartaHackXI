@@ -63,14 +63,6 @@ export default function RulesGridCard({
       <div style={styles.gridRows}>
         {rows.map((row, i) => {
           const locked = isLocked(i);
-          // if (tokens) {
-          //   const SYMBOL_REGEX = /^[_A-Z][_A-Z0-9]*$/;
-          // } else {
-          //   const SYMBOL_REGEX = /^[_a-z][_z-0-9]*$/;
-          // }
-          const SYMBOL_REGEX = tokens ? /^[_A-Z][_A-Z0-9]*$/ : /^[_a-z][_a-z0-9]*$/;
-
-          const isValid = row.left === "" || SYMBOL_REGEX.test(row.left);
 
 
           return (
@@ -95,7 +87,7 @@ export default function RulesGridCard({
                 readOnly={locked}
                 style={{
                   ...styles.gridInput,
-                  borderColor: isValid ? styles.gridInput : "#ff4d4f",
+                  borderColor: styles.gridInput,
                   ...(locked && {
                     backgroundColor: styles.card.backgroundColor,
                     borderStyle: "dotted",
