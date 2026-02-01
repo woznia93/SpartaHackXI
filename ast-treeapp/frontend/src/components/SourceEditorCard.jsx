@@ -4,8 +4,16 @@ import ErrorPanel from "./ErrorPanel.jsx";
 export default function SourceEditorCard({ value, onChange, onUpload, errors }) {
   return (
     <section style={styles.card}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-        <h2 style={styles.h2}>Source</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          marginBottom: 10,
+        }}
+      >
+        <h2 style={{ ...styles.h2, margin: 0 }}>Source</h2>
         <label style={styles.uploadBtn}>
           Upload file
           <input

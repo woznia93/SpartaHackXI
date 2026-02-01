@@ -29,7 +29,7 @@ export default function RulesGridCard({
   return (
     <section style={styles.card}>
       <div style={styles.cardHeader}>
-        <h2 style={styles.h2}>{title}</h2>
+        <h2 style={{ ...styles.h2, margin: 0 }}>{title}</h2>
         <button
           type="button"
           onClick={() => setEditing((v) => !v)}

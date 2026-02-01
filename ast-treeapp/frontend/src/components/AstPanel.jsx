@@ -100,8 +100,15 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens })
 
   return (
     <section style={styles.cardWide}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <h2 style={styles.h2}>AST</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 10,
+        }}
+      >
+        <h2 style={{ ...styles.h2, margin: 0 }}>AST</h2>
         {headerRight}
       </div>
       {!ast ? (

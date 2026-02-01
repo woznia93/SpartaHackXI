@@ -61,6 +61,7 @@ export const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     gap: 10,
+    marginBottom: 10,
   },
   editBtn: {
     borderRadius: 999,
