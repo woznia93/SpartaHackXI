@@ -86,7 +86,15 @@ export const styles = {
     fontSize: 12.5,
     lineHeight: 1.4,
   },
-  help: { margin: "10px 0 0 0", fontSize: 12, color: "var(--muted)" },
+  help: { margin: "10px 0 0 0", fontSize: 12, color: "#bdbdbd" },
+  helpRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 12,
+    width: "100%",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
   gridRows: { display: "flex", flexDirection: "column", gap: 10 },
   gridRow: {
     display: "grid",

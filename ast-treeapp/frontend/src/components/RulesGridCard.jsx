@@ -8,6 +8,8 @@ export default function RulesGridCard({
   leftPlaceholder,
   rightPlaceholder,
   help,
+  helpLeft,
+  helpRight,
   addLabel = "Add row",
   showIgnore = false,
 }) {
@@ -110,7 +112,16 @@ export default function RulesGridCard({
         </div>
       )}
 
-      <p style={styles.help}>{help}</p>
+      {helpLeft || helpRight ? (
+        <p style={styles.help}>
+          <span style={styles.helpRow}>
+            <span>{helpLeft}</span>
+            <span style={{ textAlign: "right" }}>{helpRight}</span>
+          </span>
+        </p>
+      ) : (
+        <p style={styles.help}>{help}</p>
+      )}
     </section>
   );
 }
