@@ -8,12 +8,12 @@ import FooterNote from "../components/FooterNote.jsx";
 import { mockParseArithmetic } from "../utils/mockParseArithmetic.js";
 
 const DEFAULT_TOKEN_ROWS = [
-  { left: "NUMBER", right: "/\\d+(\\.\\d+)?/" },
-  { left: "PLUS", right: "/\\+/" },
-  { left: "STAR", right: "/\\*/" },
-  { left: "LPAREN", right: "/\\(/" },
-  { left: "RPAREN", right: "/\\)/" },
-  { left: "WS", right: "/\\s+/ skip" },
+  { left: "NUMBER", right: "/\\d+(\\.\\d+)?/", ignore: false },
+  { left: "PLUS", right: "/\\+/", ignore: false },
+  { left: "STAR", right: "/\\*/", ignore: false },
+  { left: "LPAREN", right: "/\\(/", ignore: false },
+  { left: "RPAREN", right: "/\\)/", ignore: false },
+  { left: "WS", right: "/\\s+/ skip", ignore: true },
 ];
 
 const DEFAULT_GRAMMAR_ROWS = [
@@ -116,10 +116,10 @@ export default function Explorer() {
           setRows={setTokenRows}
           leftPlaceholder="TOKEN_NAME"
           rightPlaceholder="regex"
+          showIgnore
           help={
             <>
-              Format: <code>TOKEN NAME /regex/</code> and optionally{" "}
-              <code>skip</code>.
+              Format: <code>TOKEN NAME /regex/</code>. Use checkboxes to skip tokens.
             </>
           }
         />
@@ -165,7 +165,10 @@ function rowsToTokenRules(rows) {
         .toUpperCase()
         .replace(/\s+/g, "_");
 
-      const value = r.right?.trim() ?? "";
+      let value = r.right?.trim() ?? "";
+      const hasSkip = /\bskip\b/i.test(value);
+      if (r.ignore && !hasSkip) value = value ? `${value} skip` : "skip";
+      if (!r.ignore && hasSkip) value = value.replace(/\s+skip\b/i, "").trim();
 
       return { key, value };
     })
