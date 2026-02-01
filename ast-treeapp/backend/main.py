@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from lark import Lark
+from typing import List, Optional, Dict
 
 
 app = FastAPI(
@@ -21,14 +23,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Request models (Pydantic validates automatically)
-class CodeRequest(BaseModel):
-    code: str
-    language: str = "python"
+class TokenRule(BaseModel):
+    key: str
+    value: str
 
-class TransformRequest(BaseModel):
-    code: str
-    transformation: str
+class GrammarRule(BaseModel):
+    left: str
+    right: str
+
+class CodeRequest(BaseModel):
+    source: str
+    tokenRules: Optional[List[TokenRule]] = []
+    grammarRules: Optional[List[GrammarRule]] = []
 
 # Routes
 @app.get("/")
@@ -45,7 +51,8 @@ def parse_code(request: CodeRequest):
     Parse code and return AST
     """
 
-    print("hello")
+    print(request)
+    
     return 1;
 
     # try:

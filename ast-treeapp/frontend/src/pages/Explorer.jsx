@@ -178,7 +178,7 @@ function rowsToGrammarRules(rows) {
     .map((r) => {
       const left = (r.left ?? "")
         .trim()
-        .toUpperCase()
+        .toLowerCase()
         .replace(/\s+/g, "_");
       const right = r.right?.trim() ?? "";
 
