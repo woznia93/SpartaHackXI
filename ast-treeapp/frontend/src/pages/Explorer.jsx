@@ -8,12 +8,12 @@ import FooterNote from "../components/FooterNote.jsx";
 import { mockParseArithmetic } from "../utils/mockParseArithmetic.js";
 
 const DEFAULT_TOKEN_ROWS = [
-  { left: "NUMBER", right: "/\\d+(\\.\\d+)?/" },
-  { left: "PLUS", right: "/\\+/" },
-  { left: "STAR", right: "/\\*/" },
-  { left: "LPAREN", right: "/\\(/" },
-  { left: "RPAREN", right: "/\\)/" },
-  { left: "WS", right: "/\\s+/ skip" },
+  { left: "NUMBER", right: "\\d+(\\.\\d+)?" },
+  { left: "PLUS", right: "\\+" },
+  { left: "STAR", right: "\\*" },
+  { left: "LPAREN", right: "\\(" },
+  { left: "RPAREN", right: "\\)" },
+  { left: "WS", right: "\\s+" },
 ];
 
 const DEFAULT_GRAMMAR_ROWS = [

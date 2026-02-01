@@ -51,8 +51,21 @@ def parse_code(request: CodeRequest):
     Parse code and return AST
     """
 
-    print(request)
-    
+    grammar = ""
+    for rule in request.grammarRules: 
+        grammar += f"{rule.left} : {rule.right}\n"
+        
+    for rule in request.tokenRules:
+        grammar += f"{rule.key} : /{rule.value}/\n"
+
+    grammar += "start : expr\n"
+    grammar += "%ignore WS\n"
+
+    print(grammar)
+    parser = Lark(grammar)
+
+    tree = parser.parse(request.source)
+    print(tree)
     return 1;
 
     # try:
