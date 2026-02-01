@@ -4,6 +4,7 @@ export default function NodeInspector({ node }) {
   return (
     <div>
       <h3 style={styles.h3}>Node Inspector</h3>
+
       {!node ? (
         <div style={styles.placeholderSmall}>Select a node in the tree.</div>
       ) : (
@@ -12,12 +13,24 @@ export default function NodeInspector({ node }) {
             <div style={styles.kvKey}>type</div>
             <div style={styles.kvVal}>{node.type}</div>
           </div>
+
+          <div style={styles.kvRow}>
+            <div style={styles.kvKey}>line</div>
+            <div style={styles.kvVal}>{node.line}</div>
+          </div>
+
+          <div style={styles.kvRow}>
+            <div style={styles.kvKey}>column</div>
+            <div style={styles.kvVal}>{node.column}</div>
+          </div>
+
           {"value" in node && (
             <div style={styles.kvRow}>
               <div style={styles.kvKey}>value</div>
               <div style={styles.kvVal}>{String(node.value)}</div>
             </div>
           )}
+
           {node.range && (
             <div style={styles.kvRow}>
               <div style={styles.kvKey}>range</div>
@@ -26,9 +39,20 @@ export default function NodeInspector({ node }) {
               </div>
             </div>
           )}
+
+          {/* RAW JSON — capped height with internal scroll */}
           <div style={{ marginTop: 10 }}>
             <div style={styles.smallLabel}>raw</div>
-            <pre style={styles.pre}>{JSON.stringify(node, null, 2)}</pre>
+            <pre
+              style={{
+                ...styles.pre,
+                maxHeight: 500,     // adjust if you want
+                overflowY: "auto",
+                overflowX: "auto",
+              }}
+            >
+              {JSON.stringify(node, null, 2)}
+            </pre>
           </div>
         </div>
       )}

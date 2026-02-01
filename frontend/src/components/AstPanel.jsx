@@ -9,10 +9,8 @@ import ErrorPanel from "./ErrorPanel.jsx";
 export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, errors }) {
   const [viewMode, setViewMode] = useState("tree");
   const canRender = Boolean(ast);
-  const [preserve, setPreserve] = useState(true);
-  const [strict, setStrict] = useState(false);
+  const [locked, setLocked] = useState(false);
   const [resetCount, setResetCount] = useState(0);
-  const [fitCount, setFitCount] = useState(0);
 
   const headerRight = useMemo(() => {
     if (!canRender) return null;
@@ -22,46 +20,29 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
           active={viewMode === "tree"}
           onClick={() => setViewMode("tree")}
         >
-          Tree
+          Node Heirarchy
         </ToggleButton>
         <ToggleButton
           active={viewMode === "bubble"}
           onClick={() => setViewMode("bubble")}
         >
-          Bubble Graph
+          Tree Visualization
         </ToggleButton>
         {viewMode === "bubble" && (
           <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: 6 }}>
             <button
-              onClick={() => setPreserve((p) => !p)}
+              onClick={() => setLocked((l) => !l)}
               style={{
                 padding: "6px 10px",
                 borderRadius: 999,
-                border: preserve ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
-                background: preserve ? "var(--row-selected)" : "var(--panel)",
+                border: locked ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
+                background: locked ? "var(--row-selected)" : "var(--panel)",
                 color: "var(--text)",
                 fontSize: 12,
                 cursor: "pointer",
               }}
             >
-              Preserve
-            </button>
-
-            <button
-              onClick={() => setStrict((s) => !s)}
-              disabled={!preserve}
-              title={!preserve ? "Enable Preserve to use Strict mode" : "Toggle Strict mode"}
-              style={{
-                padding: "6px 10px",
-                borderRadius: 999,
-                border: strict ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
-                background: strict ? "var(--row-selected)" : "var(--panel)",
-                color: "var(--text)",
-                fontSize: 12,
-                cursor: !preserve ? "not-allowed" : "pointer",
-              }}
-            >
-              Strict
+              {locked ? "Unlock" : "Lock"}
             </button>
 
             <button
@@ -78,26 +59,11 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
             >
               Reset
             </button>
-
-            <button
-              onClick={() => setFitCount((c) => c + 1)}
-              style={{
-                padding: "6px 10px",
-                borderRadius: 8,
-                border: "1px solid var(--border)",
-                background: "var(--panel)",
-                color: "var(--muted-strong)",
-                fontSize: 12,
-                cursor: "pointer",
-              }}
-            >
-              Fit
-            </button>
           </div>
         )}
       </div>
     );
-  }, [canRender, viewMode, preserve, strict]);
+  }, [canRender, viewMode, locked]);
 
   return (
     <section style={styles.cardWide}>
@@ -127,10 +93,8 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
               ast={ast}
               selectedId={selectedNode?.id}
               onSelect={setSelectedNode}
-              preserveStructure={preserve}
-              strictMode={strict}
+              locked={locked}
               resetSignal={resetCount}
-              fitSignal={fitCount}
             />
           </div>
 

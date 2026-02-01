@@ -5,7 +5,7 @@ export default function ErrorPanel({ errors }) {
 
   return (
     <div style={styles.errorBox}>
-      <div style={{ fontWeight: 700, marginBottom: 8 }}>ERROR:</div>
+      <div style={{ fontWeight: 700, marginBottom: 8 }}>Errors</div>
       {errors.map((err, idx) => (
         <div key={idx} style={{ marginBottom: 8 }}>
           <pre style={{ fontWeight: 600 }}>{err.message ?? "Error"}</pre>

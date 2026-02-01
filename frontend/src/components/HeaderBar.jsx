@@ -27,16 +27,16 @@ export default function HeaderBar({
           {theme === "dark" ? "Light theme" : "Dark theme"}
         </button>
 
-        <label style={styles.toggle}>
+        {/* <label style={styles.toggle}>
           <input
             type="checkbox"
-            checked={useMock}
+            checked={false}
             onChange={(e) => setUseMock(e.target.checked)}
           />
           <span style={{ marginLeft: 8 }}>
             Demo mode (mock parser)
           </span>
-        </label>
+        </label> */}
 
         <button
           onClick={onParse}

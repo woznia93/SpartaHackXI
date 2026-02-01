@@ -14,6 +14,7 @@ export default function RulesGridCard({
   showIgnore = false,
   lockLeftIndices = [],
   disableRemoveIndices = [],
+  tokens = false
 }) {
   const [editing, setEditing] = useState(false);
 
@@ -63,6 +64,7 @@ export default function RulesGridCard({
         {rows.map((row, i) => {
           const locked = isLocked(i);
 
+
           return (
             <div
               key={`row-${i}`}
@@ -76,13 +78,16 @@ export default function RulesGridCard({
                   : styles.gridRow
               }
             >
-              <input
+             <input
                 value={row.left}
-                onChange={(e) => updateRow(i, "left", e.target.value)}
+                onChange={(e) => {
+                  updateRow(i, "left", e.target.value);
+                }}
                 placeholder={leftPlaceholder}
                 readOnly={locked}
                 style={{
                   ...styles.gridInput,
+                  borderColor: styles.gridInput,
                   ...(locked && {
                     backgroundColor: styles.card.backgroundColor,
                     borderStyle: "dotted",
@@ -91,6 +96,7 @@ export default function RulesGridCard({
                 onFocus={(e) => locked && e.target.blur()}
                 spellCheck={false}
               />
+
 
               <input
                 value={row.right}

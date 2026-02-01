@@ -78,7 +78,7 @@ export default function Explorer() {
   const [errors, setErrors] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
 
-  const [useMock, setUseMock] = useState(true);
+  const [useMock, setUseMock] = useState(false);
 
   const tokenRules = useMemo(() => rowsToTokenRules(tokenRows), [tokenRows]);
   const grammarRules = useMemo(() => rowsToGrammarRules(grammarRows), [grammarRows]);
@@ -158,6 +158,7 @@ export default function Explorer() {
       <main style={styles.mainGrid}>
         <RulesGridCard
           title="Token Regex Rules"
+          tokens = {true}
           rows={tokenRows}
           setRows={setTokenRows}
           leftPlaceholder="TOKEN_NAME"
@@ -170,6 +171,7 @@ export default function Explorer() {
         <RulesGridCard
           title="Grammar Rules"
           rows={grammarRows}
+          tokens = {false}
           setRows={setGrammarRows}
           leftPlaceholder="Non Terminal"
           rightPlaceholder="Rule expression"
@@ -177,7 +179,7 @@ export default function Explorer() {
           disableRemoveIndices={[0]}
           help={
             <>
-              EBNF style expressions.
+              EBNF style expressions. To hide a rule from the final tree, prefix it with an underscrore e.g _expr.
             </>
           }
         />
@@ -207,7 +209,6 @@ function rowsToTokenRules(rows) {
     .map((r) => {
       const key = (r.left ?? "")
         .trim()
-        .toUpperCase()
         .replace(/\s+/g, "_");
 
       const value = r.right?.trim() ?? "";
@@ -223,7 +224,6 @@ function rowsToGrammarRules(rows) {
     .map((r) => {
       const left = (r.left ?? "")
         .trim()
-        .toLowerCase()
         .replace(/\s+/g, "_");
       const right = r.right?.trim() ?? "";
 
@@ -231,4 +231,3 @@ function rowsToGrammarRules(rows) {
     })
     .filter((r) => r.left || r.right);
 }
-

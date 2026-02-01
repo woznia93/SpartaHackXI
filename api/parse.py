@@ -83,3 +83,12 @@ class handler(BaseHTTPRequestHandler):
         pass
 
 
+# if __name__ == "__main__":
+#     from http.server import HTTPServer
+
+#     host = "0.0.0.0"  # listen on all interfaces
+#     port = 8000       # choose your port
+
+#     print(f"Server running at http://{host}:{port}/")
+#     server = HTTPServer((host, port), handler)
+#     server.serve_forever()

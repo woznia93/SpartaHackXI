@@ -30,7 +30,7 @@ function TreeNode({ node, depth, onSelect, selectedId, getChildren }) {
   const label = `${node.type ?? "Node"}${node.value != null ? `: '${node.value}'` : ""}`;
 
   return (
-    <div style={{ marginLeft: depth * 14 }}>
+    <div style={{ marginLeft: depth * 5 }}>
       <div
         style={{
           ...styles.treeRow,
