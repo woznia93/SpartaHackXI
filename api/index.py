@@ -1,18 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from lark import Lark, Token, Tree
 from typing import List, Optional
 from mangum import Mangum
 
-app = FastAPI(
-    title="AST Explorer API",
-    version="1.0.0",
-)
+app = FastAPI(title="AST Explorer API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # OK for hackathon
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -30,10 +27,6 @@ class CodeRequest(BaseModel):
     source: str
     tokenRules: Optional[List[TokenRule]] = []
     grammarRules: Optional[List[GrammarRule]] = []
-
-@app.get("/")
-def root():
-    return {"status": "AST Explorer API running"}
 
 def ast_to_json(node, counter):
     if isinstance(node, Token):
@@ -55,8 +48,8 @@ def ast_to_json(node, counter):
     else:
         raise TypeError(f"Unknown node type: {type(node)}")
 
-@app.post("/")
-def parse_code(request: CodeRequest):
+@app.post("/parse")
+async def parse_code(request: CodeRequest):
     try:
         grammar = ""
         for rule in request.grammarRules:
@@ -77,5 +70,8 @@ def parse_code(request: CodeRequest):
     except Exception as e:
         return {"ok": False, "errors": [{"message": str(e)}]}
 
-#REQUIRED BY VERCEL
-handler = Mangum(app)
+@app.get("/")
+async def health():
+    return {"status": "ok"}
+
+handler = Mangum(app, lifespan="off")
