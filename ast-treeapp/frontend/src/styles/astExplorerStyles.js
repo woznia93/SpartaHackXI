@@ -190,7 +190,7 @@ export const styles = {
     cursor: "pointer",
   },
   treeRowSelected: {
-    background: "var(--panel",
+    background: "var(--panel)",
     border: "1px solid var(--row-selected-border)",
   },
   disclosure: {

@@ -37,9 +37,9 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
               style={{
                 padding: "6px 10px",
                 borderRadius: 999,
-                border: preserve ? "1px solid #3b82f6" : "1px solid #223055",
-                background: preserve ? "rgba(59,130,246,0.15)" : "#0b1020",
-                color: preserve ? "#bfdbfe" : "#cbd5e1",
+                border: preserve ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
+                background: preserve ? "var(--row-selected)" : "var(--panel)",
+                color: "var(--text)",
                 fontSize: 12,
                 cursor: "pointer",
               }}
@@ -54,9 +54,9 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
               style={{
                 padding: "6px 10px",
                 borderRadius: 999,
-                border: strict ? "1px solid #ef4444" : "1px solid #223055",
-                background: strict ? "rgba(239,68,68,0.12)" : "#0b1020",
-                color: strict ? "#fecaca" : "#cbd5e1",
+                border: strict ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
+                background: strict ? "var(--row-selected)" : "var(--panel)",
+                color: "var(--text)",
                 fontSize: 12,
                 cursor: !preserve ? "not-allowed" : "pointer",
               }}
@@ -69,9 +69,9 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
               style={{
                 padding: "6px 10px",
                 borderRadius: 8,
-                border: "1px solid #223055",
-                background: "#0b1020",
-                color: "#cbd5e1",
+                border: "1px solid var(--border)",
+                background: "var(--panel)",
+                color: "var(--muted-strong)",
                 fontSize: 12,
                 cursor: "pointer",
               }}
@@ -84,9 +84,9 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, e
               style={{
                 padding: "6px 10px",
                 borderRadius: 8,
-                border: "1px solid #223055",
-                background: "#0b1020",
-                color: "#cbd5e1",
+                border: "1px solid var(--border)",
+                background: "var(--panel)",
+                color: "var(--muted-strong)",
                 fontSize: 12,
                 cursor: "pointer",
               }}
@@ -167,9 +167,9 @@ function ToggleButton({ active, onClick, children }) {
       style={{
         padding: "6px 10px",
         borderRadius: 999,
-        border: active ? "1px solid #ffffff" : "1px solid #2a2a2a",
-        background: active ? "rgba(255,255,255,0.12)" : "#161616",
-        color: active ? "#ffffff" : "#d4d4d4",
+        border: active ? "1px solid var(--row-selected-border)" : "1px solid var(--border)",
+        background: active ? "var(--row-selected)" : "var(--chip)",
+        color: active ? "var(--text)" : "var(--muted-strong)",
         fontSize: 12,
         cursor: "pointer",
       }}
