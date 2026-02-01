@@ -1,7 +1,6 @@
 import { styles } from "../styles/astExplorerStyles.js";
-import ErrorPanel from "./ErrorPanel.jsx";
 
-export default function SourceEditorCard({ value, onChange, onUpload, errors }) {
+export default function SourceEditorCard({ value, onChange, onUpload }) {
   return (
     <section style={styles.card}>
       <div
@@ -34,8 +33,6 @@ export default function SourceEditorCard({ value, onChange, onUpload, errors }) 
         style={styles.textarea}
         spellCheck={false}
       />
-
-      <ErrorPanel errors={errors} />
     </section>
   );
 }

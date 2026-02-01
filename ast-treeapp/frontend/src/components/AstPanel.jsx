@@ -4,8 +4,9 @@ import Tree from "./Tree.jsx";
 import NodeInspector from "./NodeInspector.jsx";
 import TokensList from "./TokensList.jsx";
 import BubbleGraph from "./BubbleGraph.jsx";
+import ErrorPanel from "./ErrorPanel.jsx";
 
-export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens }) {
+export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens, errors }) {
   const [viewMode, setViewMode] = useState("tree");
   const canRender = Boolean(ast);
   const [preserve, setPreserve] = useState(true);
@@ -111,7 +112,11 @@ export default function AstPanel({ ast, selectedNode, setSelectedNode, tokens })
         <h2 style={{ ...styles.h2, margin: 0 }}>AST</h2>
         {headerRight}
       </div>
-      {!ast ? (
+      {errors?.length ? (
+        <div style={styles.placeholder}>
+          <ErrorPanel errors={errors} />
+        </div>
+      ) : !ast ? (
         <div style={styles.placeholder}>
           Click <b>Parse</b> to generate an AST.
         </div>
