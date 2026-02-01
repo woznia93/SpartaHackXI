@@ -75,7 +75,7 @@ class handler(BaseHTTPRequestHandler):
                     raise ValueError("Token name is empty")
                 
                 if re.fullmatch(TOKEN_NAME_PATTERN, rule['key']) is None:
-                    raise ValueError(f"Invalid token name: {rule['key']}\n\nToken names must start with an uppercase or an underscore, followed by an upercase, underscore, or number.")
+                    raise ValueError(f"Invalid token name: {rule['key']}\n\nToken names must start with an uppercase or an underscore, followed by an uppercase, underscore, or number.")
 
                 grammar += f"{rule['key']} : /{rule['value']}/\n"
                 if rule.get('ignore'):
