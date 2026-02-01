@@ -21,6 +21,8 @@ export default function BubbleGraph({
   const lastResetRef = useRef(resetSignal);
   const lockedRef = useRef(locked);
   lockedRef.current = locked;
+  const selectedIdRef = useRef(selectedId);
+  selectedIdRef.current = selectedId;
 
   // Seed positions from layout whenever the AST changes
   useEffect(() => {
@@ -59,7 +61,7 @@ export default function BubbleGraph({
   // Re-draw when anything visual changes
   useEffect(() => {
     draw();
-  }, [layoutNodes, layoutLinks, width, height, selectedId]);
+  }, [layoutNodes, layoutLinks, width, height]);
 
   // Lock/unlock: just flip cursors in place, don't touch the rest of the SVG
   useEffect(() => {
@@ -67,6 +69,17 @@ export default function BubbleGraph({
       nodesRef.current.style("cursor", locked ? "default" : "grab");
     }
   }, [locked]);
+
+  // Selection: patch circle fill/stroke in place
+  useEffect(() => {
+    if (nodesRef.current) {
+      nodesRef.current
+        .select("circle")
+        .attr("fill", (d) => (d.id === selectedId ? "rgba(255,255,255,0.13)" : "#2a2a2a"))
+        .attr("stroke", (d) => (d.id === selectedId ? "#fff" : "#3a3a3a"))
+        .attr("stroke-width", (d) => (d.id === selectedId ? 2.5 : 1.2));
+    }
+  }, [selectedId]);
 
   const draw = useCallback(() => {
     if (!svgRef.current) return;
@@ -113,9 +126,9 @@ export default function BubbleGraph({
     nodes
       .append("circle")
       .attr("r", (d) => d.r)
-      .attr("fill", (d) => (d.id === selectedId ? "rgba(255,255,255,0.13)" : "#2a2a2a"))
-      .attr("stroke", (d) => (d.id === selectedId ? "#fff" : "#3a3a3a"))
-      .attr("stroke-width", (d) => (d.id === selectedId ? 2.5 : 1.2));
+      .attr("fill", (d) => (d.id === selectedIdRef.current ? "rgba(255,255,255,0.13)" : "#2a2a2a"))
+      .attr("stroke", (d) => (d.id === selectedIdRef.current ? "#fff" : "#3a3a3a"))
+      .attr("stroke-width", (d) => (d.id === selectedIdRef.current ? 2.5 : 1.2));
 
     nodes
       .append("text")
@@ -168,7 +181,7 @@ export default function BubbleGraph({
       });
 
     nodes.call(drag);
-  }, [layoutNodes, layoutLinks, selectedId, onSelect]);
+  }, [layoutNodes, layoutLinks, onSelect]);
 
   return (
     <svg
