@@ -55,7 +55,7 @@ def ast_to_json(node, counter):
     else:
         raise TypeError(f"Unknown node type: {type(node)}")
 
-@app.post("/parse")
+@app.post("/")
 def parse_code(request: CodeRequest):
     try:
         grammar = ""
