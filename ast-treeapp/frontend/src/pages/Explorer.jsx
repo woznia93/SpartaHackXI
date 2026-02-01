@@ -165,12 +165,9 @@ function rowsToTokenRules(rows) {
         .toUpperCase()
         .replace(/\s+/g, "_");
 
-      let value = r.right?.trim() ?? "";
-      const hasSkip = /\bskip\b/i.test(value);
-      if (r.ignore && !hasSkip) value = value ? `${value} skip` : "skip";
-      if (!r.ignore && hasSkip) value = value.replace(/\s+skip\b/i, "").trim();
+      const value = r.right?.trim() ?? "";
 
-      return { key, value };
+      return { key, value, ignore: Boolean(r.ignore) };
     })
     .filter((r) => r.key || r.value);
 }

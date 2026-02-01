@@ -19,19 +19,7 @@ export default function RulesGridCard({
   }
 
   function setIgnore(index, checked) {
-    const next = rows.map((row, i) => {
-      if (i !== index) return row;
-      const value = row.right ?? "";
-      const hasSkip = /\bskip\b/i.test(value);
-      let nextValue = value;
-      if (checked && !hasSkip) {
-        const trimmed = value.trim();
-        nextValue = trimmed ? `${trimmed} skip` : "skip";
-      } else if (!checked && hasSkip) {
-        nextValue = value.replace(/\s+skip\b/i, "").trim();
-      }
-      return { ...row, ignore: checked, right: nextValue };
-    });
+    const next = rows.map((row, i) => (i === index ? { ...row, ignore: checked } : row));
     setRows(next);
   }
 
@@ -97,7 +85,7 @@ export default function RulesGridCard({
               >
                 <input
                   type="checkbox"
-                  checked={Boolean(row.ignore) || /\bskip\b/i.test(row.right ?? "")}
+                  checked={Boolean(row.ignore)}
                   onChange={(e) => setIgnore(i, e.target.checked)}
                   style={{ accentColor: "#3b82f6" }}
                 />
